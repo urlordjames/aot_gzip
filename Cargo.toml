@@ -1,0 +1,21 @@
+[package]
+name = "aot_gzip"
+version = "0.1.0"
+edition = "2021"
+authors = ["urlordjames <32751441+urlordjames@users.noreply.github.com>"]
+license = "GPL-3.0+"
+
+[dependencies.clap]
+version = "4.3"
+features = [ "derive" ]
+
+[dependencies.tokio]
+version = "1.28"
+features = [ "rt-multi-thread", "macros", "fs", "io-util" ]
+
+[dependencies.async-compression]
+version = "0.4"
+features = [ "tokio", "gzip" ]
+
+[dependencies]
+async-recursion = "1.0"
