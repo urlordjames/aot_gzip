@@ -62,7 +62,7 @@ async fn compress_file(path: PathBuf, silent: bool) {
 
 		let mut gzip_encoder = GzipEncoder::with_quality(output_file, Level::Best);
 		gzip_encoder.write_all(&input_buf).await.unwrap();
-		gzip_encoder.flush().await.unwrap();
+		gzip_encoder.shutdown().await.unwrap();
 
 		if !silent {
 			println!("successfully compressed {compress_to:?}");

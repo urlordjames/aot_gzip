@@ -11,7 +11,7 @@
 			};
 			aot_gzip = pkgs.rustPlatform.buildRustPackage {
 				pname = "aot_gzip";
-				version = "0.1.0";
+				version = "0.1.1";
 
 				src = ./.;
 
