@@ -1,6 +1,6 @@
 [package]
 name = "aot_gzip"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 authors = ["urlordjames <32751441+urlordjames@users.noreply.github.com>"]
 license = "GPL-3.0+"
@@ -10,12 +10,19 @@ version = "4.3"
 features = [ "derive" ]
 
 [dependencies.tokio]
-version = "1.28"
-features = [ "rt-multi-thread", "macros", "fs", "io-util" ]
+version = "1.29"
+features = [ "rt-multi-thread", "macros", "fs" ]
 
-[dependencies.async-compression]
-version = "0.4"
-features = [ "tokio", "gzip" ]
+[dependencies.tokio-util]
+version = "0.7"
+features = [ "codec", "io" ]
+
+[dependencies.futures-util]
+version = "0.3"
+default-features = false
+features = [ "sink" ]
 
 [dependencies]
 async-recursion = "1.0"
+flate2 = "1.0"
+bytes = "1.4"

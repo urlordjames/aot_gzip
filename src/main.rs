@@ -1,9 +1,11 @@
 use clap::Parser;
 use std::path::PathBuf;
 use tokio::fs;
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
-use async_compression::Level;
-use async_compression::tokio::write::GzipEncoder;
+use tokio_util::io::ReaderStream;
+use futures_util::SinkExt;
+
+mod gzip;
+use gzip::GzipSink;
 
 #[derive(Parser)]
 struct Cli {
@@ -54,15 +56,15 @@ async fn compress_file(path: PathBuf, silent: bool) {
 	file_name.push(".gz");
 	let compress_to = path.with_file_name(file_name);
 
-	let mut input_file = fs::File::open(path).await.unwrap();
+	let input_file = fs::File::open(path).await.unwrap();
 
 	if let Ok(output_file) = fs::File::create(&compress_to).await {
-		let mut input_buf = vec![];
-		input_file.read_to_end(&mut input_buf).await.unwrap();
+		const READER_CAPACITY: usize = 2_usize.pow(15);
+		let mut reader_stream = ReaderStream::with_capacity(input_file, READER_CAPACITY);
 
-		let mut gzip_encoder = GzipEncoder::with_quality(output_file, Level::Best);
-		gzip_encoder.write_all(&input_buf).await.unwrap();
-		gzip_encoder.shutdown().await.unwrap();
+		let mut gzip_sink = GzipSink::new(output_file);
+		gzip_sink.send_all(&mut reader_stream).await.unwrap();
+		gzip_sink.close().await.unwrap();
 
 		if !silent {
 			println!("successfully compressed {compress_to:?}");
